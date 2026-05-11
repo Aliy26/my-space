@@ -16,49 +16,45 @@ A full-stack portfolio website built with React, TypeScript, Node.js, and MongoD
 
 ---
 
-## Installation
+## Running in Development
 
-### 1. Clone the repository
+Open two terminals:
 
-```bash
-git clone https://github.com/Akhrorfayzullo/Claude.git
-cd Claude
-```
-
-### 2. Set up the server
+**Terminal 1 — Backend:**
 
 ```bash
 cd server
-npm install
+npm run dev
 ```
 
-Create a `.env` file in the `server/` directory:
+Server runs at `http://localhost:4000`
 
-```env
-PORT=4000
-MONGODB_URI=your_mongodb_connection_string
-CLIENT_URL=http://localhost:5173
-JWT_SECRET=your_long_random_secret
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=your_secure_password
-```
-
-### 3. Set up the client
+**Terminal 2 — Frontend:**
 
 ```bash
-cd ../client
-npm install
+cd client
+npm run dev
 ```
 
-Create a `.env.local` file in the `client/` directory:
-
-```env
-VITE_API_BASE_URL=http://localhost:4000
-```
+Client runs at `http://localhost:5173`
 
 ---
 
-## Running in Development
+## Building for Production
+
+```bash
+cd client
+npm run build
+```
+
+The built files go to `client/dist/`. The Express server automatically serves them if they exist.
+
+To run in production:
+
+```bash
+cd server
+npm start
+```
 
 Open two terminals:
 
