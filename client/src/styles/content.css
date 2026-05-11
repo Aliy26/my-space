@@ -600,6 +600,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+  text-align: center;
 }
 
 .resume-card-actions {
@@ -612,6 +613,8 @@
   text-align: center;
   font-size: 0.82rem;
   padding: 8px 10px;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* ── Admin page ───────────────────────────────────────────────────────────── */

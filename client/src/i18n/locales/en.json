@@ -49,8 +49,8 @@
   "resume": {
     "eyebrow": "My Resume",
     "title": "Resume",
-    "view": "View Resume",
-    "download": "Download Resume",
+    "view": "View",
+    "download": "Download",
     "empty": "Resume coming soon — the latest version will appear here once it's uploaded."
   },
   "contact": {
