@@ -519,64 +519,99 @@
   justify-content: center;
 }
 
-.resume-card-wrapper {
+.resume-cards-grid {
   display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
   justify-content: center;
 }
 
 .resume-card {
-  width: 420px;
-  border-radius: 20px;
+  width: 260px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .resume-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
 }
 
-.resume-card-preview {
-  width: 100%;
-  height: 540px;
-  overflow: hidden;
-  background: #f5f5f5;
+.resume-card-preview-area {
   position: relative;
-}
-
-.resume-card-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  pointer-events: none;
-}
-
-.resume-card-footer {
-  padding: 16px 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid var(--border);
+  justify-content: center;
+  padding: 40px 24px 32px;
+  background: var(--surface-soft);
+  border-bottom: 1px solid var(--border);
 }
 
-.resume-card-name {
-  font-size: 0.85rem;
+.resume-card-icon {
+  width: 80px;
+  height: 80px;
+  color: var(--accent);
+}
+
+.resume-card-flag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px 4px 6px;
+}
+
+.resume-card-flag img {
+  width: 20px;
+  height: 15px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.resume-card-flag span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.resume-card-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.resume-card-filename {
+  font-size: 0.82rem;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
+  display: block;
 }
 
 .resume-card-actions {
   display: flex;
   gap: 8px;
-  flex-shrink: 0;
+}
+
+.resume-card-actions .button {
+  flex: 1;
+  text-align: center;
+  font-size: 0.82rem;
+  padding: 8px 10px;
 }
 
 /* ── Admin page ───────────────────────────────────────────────────────────── */
@@ -785,6 +820,24 @@
   width: 28px;
   height: 28px;
   color: var(--accent);
+}
+
+.admin-resume-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-resume-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  flex-wrap: wrap;
 }
 
 .admin-resume-meta {

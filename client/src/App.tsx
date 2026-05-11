@@ -56,7 +56,7 @@ function App() {
   const [profileImage, setProfileImage] = useState<ProfileImageSummary | null>(
     null,
   );
-  const [resume, setResume] = useState<ResumeSummary | null>(null);
+  const [resumes, setResumes] = useState<ResumeSummary[]>([]);
   const [contactSettings, setContactSettings] = useState<ContactSettings>({
     email: "umaraliy092@gmail.com",
     github: "https://github.com/aliy26",
@@ -144,10 +144,10 @@ function App() {
       }
 
       try {
-        const resumeSummary = await fetchResume();
-        if (isMounted) setResume(resumeSummary);
+        const resumeList = await fetchResume();
+        if (isMounted) setResumes(resumeList);
       } catch {
-        // Hero falls back to local resume.
+        // Resume falls back to empty.
       }
 
       try {
@@ -187,7 +187,7 @@ function App() {
     window.location.href = "/";
   };
 
-  const resumeUrl = resume ? toAbsoluteApiUrl(resume.viewUrl) : null;
+  const resumeUrl = resumes[0] ? toAbsoluteApiUrl(resumes[0].viewUrl) : null;
   const profileImageUrl = profileImage
     ? toAbsoluteApiUrl(profileImage.viewUrl)
     : null;
@@ -233,7 +233,7 @@ function App() {
               <TechTicker />
             </div>
             <Projects projects={safeProjects} />
-            <ResumeSection resume={resume} />
+            <ResumeSection resumes={resumes} />
             <Contact
               email={contactSettings.email}
               github={contactSettings.github}

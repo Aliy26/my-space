@@ -10,14 +10,8 @@ async function getLatestResume() {
 
 router.get('/', async (_request, response, next) => {
   try {
-    const resume = await getLatestResume()
-
-    if (!resume) {
-      response.status(404).json({ message: 'No resume uploaded yet.' })
-      return
-    }
-
-    response.json(serializeResume(resume))
+    const resumes = await Resume.find().sort({ updatedAt: -1, createdAt: -1 })
+    response.json(resumes.map(serializeResume))
   } catch (error) {
     next(error)
   }

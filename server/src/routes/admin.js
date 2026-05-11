@@ -202,7 +202,11 @@ router.post('/resume', resumeUpload.single('resume'), async (request, response, 
       return
     }
 
-    const previousResume = await Resume.findOne().sort({ updatedAt: -1, createdAt: -1 })
+    const existingCount = await Resume.countDocuments()
+    if (existingCount >= 3) {
+      response.status(400).json({ message: 'Maximum of 3 resumes allowed. Delete one before uploading.' })
+      return
+    }
 
     const result = await uploadBuffer(request.file.buffer, {
       folder: 'portfolio/resumes',
@@ -218,13 +222,26 @@ router.post('/resume', resumeUpload.single('resume'), async (request, response, 
       cloudinaryPublicId: result.public_id,
     })
 
-    // Delete old resume from Cloudinary after new one is saved
-    if (previousResume?.cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(previousResume.cloudinaryPublicId, { resource_type: 'raw' }).catch(() => {})
-      await Resume.findByIdAndDelete(previousResume._id)
+    response.status(201).json(serializeResume(resume))
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.delete('/resume/:resumeId', async (request, response, next) => {
+  try {
+    const resume = await Resume.findById(request.params.resumeId)
+    if (!resume) {
+      response.status(404).json({ message: 'Resume not found.' })
+      return
     }
 
-    response.status(201).json(serializeResume(resume))
+    if (resume.cloudinaryPublicId) {
+      await cloudinary.uploader.destroy(resume.cloudinaryPublicId, { resource_type: 'raw' }).catch(() => {})
+    }
+
+    await Resume.findByIdAndDelete(resume._id)
+    response.status(204).send()
   } catch (error) {
     next(error)
   }

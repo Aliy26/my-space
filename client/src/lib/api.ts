@@ -102,19 +102,17 @@ export async function fetchProjects() {
 }
 
 export async function fetchResume() {
-  const response = await fetch(getApiUrl("/api/resume"), {
+  return requestJson<ResumeSummary[]>("/api/resume");
+}
+
+export async function deleteResume(resumeId: string): Promise<void> {
+  const response = await fetch(getApiUrl(`/api/admin/resume/${resumeId}`), {
+    method: "DELETE",
     credentials: "include",
   });
-
-  if (response.status === 404) {
-    return null;
-  }
-
   if (!response.ok) {
     throw new Error(await parseError(response));
   }
-
-  return (await response.json()) as ResumeSummary;
 }
 
 export async function fetchProfileImage() {
@@ -186,6 +184,7 @@ export async function uploadResume(file: File) {
     body: formData,
   });
 }
+
 
 export async function uploadProfileImage(file: File) {
   const formData = new FormData();

@@ -11,6 +11,7 @@ import {
   createProject,
   createSkill,
   deleteProject,
+  deleteResume,
   deleteSkill,
   fetchContactSettings,
   fetchDefaultLanguage,
@@ -126,7 +127,7 @@ type AdminState = {
   projects: Project[];
   skills: Skill[];
   profileImage: ProfileImageSummary | null;
-  resume: ResumeSummary | null;
+  resumes: ResumeSummary[];
   selectedLanguage: LanguageCode;
   contactSettings: ContactSettings;
   heroStats: HeroStats;
@@ -156,7 +157,7 @@ type AdminAction =
       type: "LOAD_SUCCESS";
       projects: Project[];
       skills: Skill[];
-      resume: ResumeSummary | null;
+      resumes: ResumeSummary[];
       profileImage: ProfileImageSummary | null;
       language: LanguageCode;
       contact: ContactSettings;
@@ -181,6 +182,7 @@ type AdminAction =
   | { type: "SET_RESUME_FILE"; file: File | null }
   | { type: "UPLOAD_RESUME_START" }
   | { type: "UPLOAD_RESUME_SUCCESS"; resume: ResumeSummary }
+  | { type: "DELETE_RESUME_SUCCESS"; resumeId: string }
   | { type: "UPLOAD_RESUME_ERROR"; error: string }
   | { type: "SET_LANGUAGE"; language: LanguageCode }
   | { type: "SAVE_LANGUAGE_START" }
@@ -263,7 +265,7 @@ const initialState: AdminState = {
   projects: [],
   skills: [],
   profileImage: null,
-  resume: null,
+  resumes: [],
   selectedLanguage: "en",
   contactSettings: { email: "", github: "" },
   heroStats: { years: "4", builds: "12" },
@@ -296,7 +298,7 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         isLoading: false,
         projects: sortProjects(action.projects),
         skills: sortSkills(action.skills),
-        resume: action.resume,
+        resumes: action.resumes,
         profileImage: action.profileImage,
         selectedLanguage: action.language,
         contactSettings: action.contact,
@@ -437,9 +439,15 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
       return {
         ...state,
         isUploadingResume: false,
-        resume: action.resume,
+        resumes: [action.resume, ...state.resumes],
         resumeFile: null,
-        statusMessage: "Resume updated.",
+        statusMessage: "Resume uploaded.",
+      };
+    case "DELETE_RESUME_SUCCESS":
+      return {
+        ...state,
+        resumes: state.resumes.filter((r) => r.id !== action.resumeId),
+        statusMessage: "Resume deleted.",
       };
     case "UPLOAD_RESUME_ERROR":
       return { ...state, isUploadingResume: false, errorMessage: action.error };
@@ -585,7 +593,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     projects,
     skills,
     profileImage,
-    resume,
+    resumes,
     selectedLanguage,
     contactSettings,
     heroStats,
@@ -618,7 +626,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
         const [
           projectList,
           skillList,
-          resumeSummary,
+          resumeList,
           profileImageSummary,
           defaultLang,
           contact,
@@ -639,7 +647,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
           type: "LOAD_SUCCESS",
           projects: projectList,
           skills: skillList,
-          resume: resumeSummary,
+          resumes: resumeList,
           profileImage: profileImageSummary,
           language: defaultLang as LanguageCode,
           contact,
@@ -675,13 +683,17 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     }
   }, [editingProjectId]);
 
-  const resumeLinks = useMemo(() => {
-    if (!resume) return null;
-    return {
-      view: toAbsoluteApiUrl(resume.viewUrl),
-      download: toAbsoluteApiUrl(resume.downloadUrl),
-    };
-  }, [resume]);
+  const handleDeleteResume = async (resumeId: string) => {
+    try {
+      await deleteResume(resumeId);
+      dispatch({ type: "DELETE_RESUME_SUCCESS", resumeId });
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_RESUME_ERROR",
+        error: error instanceof Error ? error.message : "Unable to delete resume.",
+      });
+    }
+  };
 
   const profileImageUrl = useMemo(
     () => (profileImage ? toAbsoluteApiUrl(profileImage.viewUrl) : null),
@@ -1042,70 +1054,63 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                   {/* ── Resume ───────────────────────────────── */}
                   {id === "resume" && (
                     <div className="admin-form">
-                      {isLoading ? (
-                        <p className="section-lead">
-                          {t("admin.loadingResume")}
-                        </p>
-                      ) : (
-                        <>
-                          <div className="admin-resume-meta">
-                            <strong>
-                              {resume?.filename ?? t("admin.noResume")}
-                            </strong>
-                            <span>
-                              {t("admin.lastUpdated")}{" "}
-                              {formatDate(resume?.updatedAt)}
-                            </span>
-                          </div>
-                          {resumeLinks ? (
-                            <div className="admin-inline-actions">
-                              <a
-                                className="button button-secondary button-icon"
-                                href={resumeLinks.view ?? undefined}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <DocumentIcon />
-                                <span>{t("admin.viewResume")}</span>
-                              </a>
-                              <a
-                                className="button button-primary button-icon"
-                                href={resumeLinks.download ?? undefined}
-                              >
-                                <DocumentIcon />
-                                <span>{t("admin.downloadResume")}</span>
-                              </a>
+                      {!isLoading && resumes.length > 0 && (
+                        <div className="admin-resume-list">
+                          {resumes.map((r) => (
+                            <div key={r.id} className="admin-resume-row">
+                              <div className="admin-resume-meta">
+                                <strong>{r.filename}</strong>
+                                <span>{t("admin.lastUpdated")} {formatDate(r.updatedAt)}</span>
+                              </div>
+                              <div className="admin-inline-actions">
+                                <a
+                                  className="button button-secondary button-icon"
+                                  href={toAbsoluteApiUrl(r.viewUrl) ?? undefined}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  <DocumentIcon />
+                                  <span>{t("admin.viewResume")}</span>
+                                </a>
+                                <button
+                                  className="button button-primary"
+                                  type="button"
+                                  onClick={() => handleDeleteResume(r.id)}
+                                >
+                                  {t("admin.delete")}
+                                </button>
+                              </div>
                             </div>
-                          ) : null}
-                        </>
+                          ))}
+                        </div>
                       )}
-                      <form
-                        className="admin-form"
-                        onSubmit={handleResumeSubmit}
-                      >
-                        <label className="field">
-                          <span>{t("admin.uploadPdf")}</span>
-                          <input
-                            type="file"
-                            accept="application/pdf"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "SET_RESUME_FILE",
-                                file: e.target.files?.[0] ?? null,
-                              })
-                            }
-                          />
-                        </label>
-                        <button
-                          className="button button-primary"
-                          type="submit"
-                          disabled={isUploadingResume || !resumeFile}
-                        >
-                          {isUploadingResume
-                            ? t("admin.uploading")
-                            : t("admin.uploadResume")}
-                        </button>
-                      </form>
+                      {resumes.length < 3 && (
+                        <form className="admin-form" onSubmit={handleResumeSubmit}>
+                          <label className="field">
+                            <span>{t("admin.uploadPdf")} ({resumes.length}/3)</span>
+                            <input
+                              type="file"
+                              accept="application/pdf"
+                              onChange={(e) =>
+                                dispatch({
+                                  type: "SET_RESUME_FILE",
+                                  file: e.target.files?.[0] ?? null,
+                                })
+                              }
+                            />
+                          </label>
+                          <button
+                            className="button button-primary"
+                            type="submit"
+                            disabled={isUploadingResume || !resumeFile}
+                          >
+                            {isUploadingResume ? t("admin.uploading") : t("admin.uploadResume")}
+                          </button>
+                        </form>
+                      )}
+                      {resumes.length >= 3 && (
+                        <p className="section-lead">Maximum of 3 resumes reached. Delete one to upload another.</p>
+                      )}
                     </div>
                   )}
 
