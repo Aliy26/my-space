@@ -20,26 +20,38 @@ function ResumeSection({ resume }: ResumeSectionProps) {
         <SectionTitle eyebrow={t('resume.eyebrow')} title={t('resume.title')} />
 
         {viewUrl && downloadUrl ? (
-          <div className="resume-wrapper">
-            <div className="resume-actions">
-              <a
-                href={viewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="button button-secondary"
-                onClick={() => trackEvent('resume_view')}
-              >
-                {t('resume.view')}
-              </a>
-              <a
-                href={downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="button button-primary"
-                onClick={() => trackEvent('resume_download')}
-              >
-                {t('resume.download')}
-              </a>
+          <div className="resume-card-wrapper">
+            <div className="resume-card">
+              <div className="resume-card-preview">
+                <iframe
+                  src={`${viewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                  title="Resume preview"
+                  className="resume-card-iframe"
+                />
+              </div>
+              <div className="resume-card-footer">
+                <span className="resume-card-name">{resume?.filename ?? 'resume.pdf'}</span>
+                <div className="resume-card-actions">
+                  <a
+                    href={viewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button-secondary"
+                    onClick={() => trackEvent('resume_view')}
+                  >
+                    {t('resume.view')}
+                  </a>
+                  <a
+                    href={downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button-primary"
+                    onClick={() => trackEvent('resume_download')}
+                  >
+                    {t('resume.download')}
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
