@@ -1,0 +1,520 @@
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — mobile-first breakpoints
+   1024px  → tablet landscape
+    768px  → tablet portrait / large phone
+    640px  → phone landscape
+    480px  → phone portrait
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1024px — Tablet landscape ─────────────────────────────── */
+@media (max-width: 1024px) {
+  /* Layout grids */
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: 48px;
+    gap: 48px;
+  }
+
+  .about-layout,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projects-grid > * {
+    flex: 0 0 calc(50% - 12px);
+    max-width: calc(50% - 12px);
+  }
+
+  .admin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Hero copy */
+  .hero h1 {
+    max-width: 100%;
+  }
+
+  /* Hero visual: shrink + center below copy */
+  .hero-visual {
+    min-height: 440px;
+  }
+
+  .hero-visual-shell {
+    width: min(480px, 100%);
+  }
+
+  /* Shrink terminal on tablet */
+  .hero-terminal {
+    width: 260px;
+  }
+
+  /* Float cards: reposition to avoid overlap */
+  .hero-float-top {
+    top: 0;
+  }
+
+  .hero-float-bottom {
+    bottom: 0;
+  }
+
+  /* Section spacing */
+  .hero,
+  .section {
+    padding: 64px 0;
+  }
+}
+
+/* ── 768px — Tablet portrait / large phone ─────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --shell-width: min(1120px, calc(100vw - 28px));
+  }
+
+  /* ── Navbar ── */
+  .nav {
+    position: relative;
+    min-height: 60px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    align-items: center;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+
+  .nav-actions {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 0 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-actions-open {
+    display: flex;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .nav-links a {
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .nav-links a::after {
+    display: none; /* hide underline on mobile — pill bg is enough */
+  }
+
+  .nav-controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* On mobile, language dropdown opens upward */
+  .lang-menu {
+    bottom: calc(100% + 8px);
+    top: auto;
+  }
+
+  .brand {
+    padding: 8px 0;
+    gap: 12px;
+    font-size: 0.95rem;
+  }
+
+  .brand-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
+
+  .site-header-scrolled .brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  /* ── Hero ── */
+  .hero,
+  .section {
+    padding: 52px 0;
+  }
+
+  .hero {
+    gap: 36px;
+    padding-top: 36px;
+  }
+
+  .hero-text {
+    font-size: 1rem;
+  }
+
+  .hero-stats-strip {
+    gap: 16px;
+  }
+
+  .hero-stat-number {
+    font-size: 1.3rem;
+  }
+
+  /* Hero visual: shrink, keep visible */
+  .hero-visual {
+    min-height: 380px;
+  }
+
+  .hero-visual-shell {
+    width: min(420px, 100%);
+  }
+
+  /* Shrink terminal */
+  .hero-terminal {
+    width: 230px;
+    font-size: 0.72rem;
+  }
+
+  .hero-terminal-body {
+    padding: 10px 12px 14px;
+    font-size: 0.72rem;
+  }
+
+  /* Float cards */
+  .hero-float {
+    padding: 10px 13px;
+  }
+
+  .hero-float-top {
+    top: 1%;
+  }
+
+  .hero-float-bottom {
+    bottom: 1%;
+  }
+
+  /* ── Cards ── */
+  .card,
+  .info-card,
+  .contact-card {
+    border-radius: 20px;
+  }
+
+  /* ── Skills ── */
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  /* ── Projects ── */
+  .projects-grid > * {
+    flex: 0 0 calc(50% - 12px);
+    max-width: calc(50% - 12px);
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    margin-bottom: 24px;
+  }
+
+  /* ── Admin ── */
+  .admin-page {
+    padding-top: 24px;
+  }
+
+  .admin-hero h1 {
+    max-width: 100%;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-inline-actions {
+    flex-direction: column;
+  }
+
+  .admin-inline-actions > * {
+    width: 100%;
+  }
+
+  .field-small {
+    max-width: none;
+  }
+
+  .admin-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-lang-selector {
+    flex-direction: column;
+  }
+
+  .admin-lang-selector .button {
+    width: 100%;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    padding-bottom: 32px;
+  }
+
+  .footer-divider {
+    margin-bottom: 32px;
+  }
+
+  .footer-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .footer-brand {
+    align-items: center;
+  }
+
+  .footer-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-right {
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  /* ── Background ── */
+  .background-cursor-glow {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* ── Login ── */
+  .login-page {
+    align-items: flex-start;
+    padding-top: 32px;
+  }
+
+  .login-card {
+    max-width: 100%;
+  }
+
+  /* ── Ticker ── */
+  .tech-ticker {
+    padding: 12px 0;
+    gap: 10px;
+  }
+
+  .ticker-item {
+    padding: 0 16px;
+    font-size: 0.78rem;
+  }
+}
+
+/* ── 640px — Phone landscape / small phone ─────────────────── */
+@media (max-width: 640px) {
+  :root {
+    --shell-width: min(1120px, calc(100vw - 20px));
+  }
+
+  /* Hero: hide the visual entirely — copy takes full screen */
+  .hero-visual {
+    display: none;
+  }
+
+  .hero {
+    padding-top: 28px;
+    gap: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 12vw, 4rem);
+    line-height: 1;
+  }
+
+  .hero-text {
+    font-size: 0.95rem;
+    margin-top: 14px;
+  }
+
+  .hero-stats-strip {
+    margin-top: 20px;
+    gap: 14px;
+  }
+
+  .hero-stat-number {
+    font-size: 1.2rem;
+  }
+
+  .hero-actions {
+    margin-top: 20px;
+    gap: 10px;
+  }
+
+  .hero-actions .button {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  /* Full-width project cards */
+  .projects-grid > * {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Skills: 1 column */
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Section spacing */
+  .hero,
+  .section {
+    padding: 44px 0;
+  }
+
+  /* Cards */
+  .card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  /* Contact list stacks */
+  .contact-list {
+    gap: 12px;
+  }
+
+  /* Ticker: single row on very small screens */
+  .ticker-row:last-child {
+    display: none;
+  }
+
+  .tech-ticker {
+    padding: 10px 0;
+  }
+
+  .ticker-item {
+    padding: 0 14px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ── 480px — Phone portrait ─────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Theme toggle: hide labels, just show the track */
+  .theme-toggle-label {
+    display: none;
+  }
+
+  .theme-toggle {
+    padding: 4px 8px;
+  }
+
+  /* Smaller nav brand */
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .brand-name {
+    font-size: 0.9rem;
+  }
+
+  /* Hero headline even smaller on tiny screens */
+  .hero h1 {
+    font-size: clamp(2.4rem, 11vw, 3rem);
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .hero-copy .eyebrow::before {
+    width: 20px;
+  }
+
+  /* Buttons: stack vertically */
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+  }
+
+  /* Section headings */
+  .section-title h2 {
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+  }
+
+  /* Cards */
+  .card,
+  .info-card,
+  .contact-card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  /* Resume embed: shorter on phone */
+  .resume-embed {
+    height: 480px;
+  }
+
+  /* Chip row: wrap tighter */
+  .chip {
+    font-size: 0.72rem;
+    padding: 3px 9px;
+  }
+
+  /* Project card image: shorter */
+  .project-card-image,
+  .project-card-image img {
+    height: 160px;
+  }
+
+  /* Footer nav links smaller */
+  .footer-nav-link {
+    font-size: 0.78rem;
+  }
+
+  /* Admin */
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

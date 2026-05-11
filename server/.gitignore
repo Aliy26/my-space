@@ -1,0 +1,5 @@
+.env
+uploads/resumes/*
+!uploads/resumes/.gitkeep
+uploads/branding/*
+!uploads/branding/.gitkeep
