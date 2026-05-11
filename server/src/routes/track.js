@@ -72,7 +72,7 @@ router.post('/', async (req, res) => {
     extraLine = `\n📁 Project: <b>${meta.title}</b>`
   }
   if (type === 'resume_download') {
-    extraLine = `\n📄 File: Resume PDF`
+    extraLine = `\n📄 File: ${meta.filename ?? 'Resume PDF'}`
   }
 
   const text =

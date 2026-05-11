@@ -19,7 +19,15 @@ const FLAG_MAP: Record<string, { flagUrl: string; label: string }> = {
 function detectLang(filename: string) {
   const lower = filename.toLowerCase().replace('.pdf', '')
   for (const [code, info] of Object.entries(FLAG_MAP)) {
-    if (lower.endsWith(`_${code}`) || lower.endsWith(`-${code}`) || lower === code) {
+    if (
+      lower === code ||
+      lower.endsWith(`_${code}`) ||
+      lower.endsWith(`-${code}`) ||
+      lower.startsWith(`${code}_`) ||
+      lower.startsWith(`${code}-`) ||
+      lower.includes(`_${code}_`) ||
+      lower.includes(`-${code}-`)
+    ) {
       return info
     }
   }
@@ -73,7 +81,7 @@ function ResumeCard({ resume }: { resume: ResumeSummary }) {
             target="_blank"
             rel="noreferrer"
             className="button button-primary"
-            onClick={() => trackEvent('resume_download')}
+            onClick={() => trackEvent('resume_download', { filename: resume.filename })}
           >
             {t('resume.download')}
           </a>
