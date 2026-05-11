@@ -9,7 +9,9 @@ export type TrackEventType =
   | "page_leave"
   | "resume_view"
   | "resume_download"
-  | "project_click";
+  | "project_click"
+  | "email_click"
+  | "github_click";
 
 /**
  * Fire-and-forget event tracker.

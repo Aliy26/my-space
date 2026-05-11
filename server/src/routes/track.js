@@ -21,6 +21,8 @@ const EVENT_META = {
   page_visit:       { emoji: '🌐', label: 'New Visit' },
   resume_download:  { emoji: '📥', label: 'Resume Downloaded' },
   project_click:    { emoji: '🚀', label: 'Project Opened' },
+  email_click:      { emoji: '✉️', label: 'Email Clicked' },
+  github_click:     { emoji: '🐙', label: 'GitHub Clicked' },
 }
 
 router.post('/', async (req, res) => {

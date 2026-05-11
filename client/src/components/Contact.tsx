@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { trackEvent } from "../lib/track.ts";
 import SectionTitle from "./SectionTitle.tsx";
 import ScrollReveal from "./ScrollReveal.tsx";
 
@@ -23,21 +24,25 @@ function Contact({
       label: t("contact.email"),
       value: email,
       href: `mailto:${email}`,
+      onClick: () => trackEvent("email_click"),
     },
     {
       label: t("contact.phone"),
       value: PHONE_DISPLAY,
       href: `tel:${PHONE}`,
+      onClick: undefined,
     },
     {
       label: t("contact.github"),
       value: githubDisplay,
       href: github,
+      onClick: () => trackEvent("github_click"),
     },
     {
       label: t("contact.location"),
       value: t("contact.availability"),
       href: "#contact",
+      onClick: undefined,
     },
   ];
 
@@ -52,7 +57,7 @@ function Contact({
         <div className="contact-layout">
           <div className="card">
             <p className="section-lead">{t("contact.lead")}</p>
-            <a className="button button-primary" href={`mailto:${email}`}>
+            <a className="button button-primary" href={`mailto:${email}`} onClick={() => trackEvent("email_click")}>
               {t("contact.startConversation")}
             </a>
           </div>
@@ -63,6 +68,7 @@ function Contact({
                 key={item.label}
                 className="info-card contact-card"
                 href={item.href}
+                onClick={item.onClick}
               >
                 <span className="contact-label">{item.label}</span>
                 <strong>{item.value}</strong>
