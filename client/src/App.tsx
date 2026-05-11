@@ -12,7 +12,7 @@ import Navbar from "./components/Navbar";
 import Projects from "./components/Projects";
 import ResumeSection from "./components/ResumeSection";
 import Skills from "./components/Skills";
-import { projects as fallbackProjects } from "./data/projects.ts";
+// import { projects as fallbackProjects } from "./data/projects.ts";
 import { skills as fallbackSkills } from "./data/skills.ts";
 import i18n from "./i18n/index.ts";
 import { LANGUAGE_STORAGE_KEY, type LanguageCode } from "./i18n/index.ts";
@@ -51,7 +51,7 @@ function getInitialTheme(): Theme {
 
 function App() {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
-  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+  const [projects, setProjects] = useState<Project[]>();
   const [skills, setSkills] = useState<Skill[]>(fallbackSkills);
   const [profileImage, setProfileImage] = useState<ProfileImageSummary | null>(
     null,
@@ -69,6 +69,8 @@ function App() {
   // null = checking, false = not logged in, string = username
   const [authUser, setAuthUser] = useState<string | null | false>(null);
   const isAdminView = window.location.pathname.startsWith("/admin");
+
+  const safeProjects = projects ?? [];
 
   useEffect(() => {
     const root = document.documentElement;
@@ -230,7 +232,7 @@ function App() {
             <div className="ticker-strip">
               <TechTicker />
             </div>
-            <Projects projects={projects} />
+            <Projects projects={safeProjects} />
             <ResumeSection resume={resume} />
             <Contact
               email={contactSettings.email}
