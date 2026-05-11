@@ -59,19 +59,6 @@
     hero-slide-up 0.7s ease both;
 }
 
-html[data-theme='light'] .hero h1 {
-  background: linear-gradient(
-    110deg,
-    #2e1f14 0%,
-    #2e1f14 10%,
-    #c4601c 35%,
-    #e8883a 50%,
-    #c4601c 65%,
-    #2e1f14 90%,
-    #2e1f14 100%
-  );
-  background-size: 200% auto;
-}
 
 .hero-text,
 .section-lead,
