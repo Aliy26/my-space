@@ -1,6 +1,7 @@
 {
   "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
+  "nodejs": "22.x",
   "rewrites": [
     {
       "source": "/(.*)",
