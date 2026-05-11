@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "../i18n/index.ts";
+import heroImage from "../assets/images/users/hero-image.png";
 
 const ownerName = import.meta.env.VITE_OWNER_NAME || "Umar";
 
@@ -115,7 +116,7 @@ function Navbar({
           <span className="brand-mark">
             <img
               className="brand-image"
-              src="src/assets/images/users/hero-image.png"
+              src={heroImage}
               alt={`${ownerName} profile`}
             />
           </span>
