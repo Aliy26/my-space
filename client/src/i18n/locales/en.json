@@ -55,14 +55,14 @@
   },
   "contact": {
     "eyebrow": "Contact",
-    "title": "If you want a site that feels sharper than the template stage, let's build it.",
-    "lead": "I am interested in full stack products, frontend-heavy builds, and UI-focused collaborations that need both good engineering and a strong visual result.",
+    "title": "Take a look around. If something stands out or you want to talk about the work, I am easy to reach.",
+    "lead": "This site reflects how I approach full stack development — from frontend presentation to backend architecture. Happy to connect, answer questions, or just talk tech.",
     "startConversation": "Start a conversation",
     "email": "Email",
     "phone": "Phone",
     "github": "GitHub",
     "location": "Based in Seoul",
-    "availability": "Employed at JCG inc."
+    "availability": "Currently at JCG inc."
   },
   "footer": {
     "backToTop": "Back to top",
