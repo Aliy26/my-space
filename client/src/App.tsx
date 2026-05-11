@@ -124,10 +124,11 @@ function App() {
         ]);
         if (isMounted) {
           setProjects(projectList);
-          const storedLanguage =
-            window.localStorage.getItem(LANGUAGE_STORAGE_KEY) as LanguageCode | null
-          const languageToUse = storedLanguage ?? (defaultLang as LanguageCode)
-          void i18n.changeLanguage(languageToUse)
+          const storedLanguage = window.localStorage.getItem(
+            LANGUAGE_STORAGE_KEY,
+          ) as LanguageCode | null;
+          const languageToUse = storedLanguage ?? (defaultLang as LanguageCode);
+          void i18n.changeLanguage(languageToUse);
         }
       } catch {
         // Keep fallback data when API is unavailable.
