@@ -62,9 +62,13 @@
 html[data-theme='light'] .hero h1 {
   background: linear-gradient(
     110deg,
-    var(--text) 0%,
-    color-mix(in srgb, var(--accent-strong) 60%, var(--text)) 50%,
-    var(--text) 100%
+    #2e1f14 0%,
+    #2e1f14 10%,
+    #c4601c 35%,
+    #e8883a 50%,
+    #c4601c 65%,
+    #2e1f14 90%,
+    #2e1f14 100%
   );
   background-size: 200% auto;
 }
