@@ -57,13 +57,13 @@ function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
   const { t } = useTranslation();
   const hasDirectFile = Boolean(certificate.viewUrl);
   const viewHref = hasDirectFile
-    ? toAbsoluteApiUrl(certificate.viewUrl) ?? undefined
+    ? (toAbsoluteApiUrl(certificate.viewUrl) ?? undefined)
     : undefined;
   const downloadHref = hasDirectFile
-    ? toAbsoluteApiUrl(certificate.downloadUrl ?? certificate.viewUrl) ??
-      viewHref
+    ? (toAbsoluteApiUrl(certificate.downloadUrl ?? certificate.viewUrl) ??
+      viewHref)
     : undefined;
-  const primaryHref = viewHref ?? (certificate.externalUrl ?? undefined);
+  const primaryHref = viewHref ?? certificate.externalUrl ?? undefined;
   const secondaryHref = certificate.externalUrl || undefined;
 
   return (
