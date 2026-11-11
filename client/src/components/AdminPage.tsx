@@ -632,6 +632,12 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         certificateFile: null,
         statusMessage: "Certificate uploaded.",
       };
+    case "UPLOAD_CERTIFICATE_ERROR":
+      return {
+        ...state,
+        isSavingCertificate: false,
+        errorMessage: action.error,
+      };
     case "DELETE_CERTIFICATE_SUCCESS": {
       const certificates = state.certificates.filter(
         (c) => c.id !== action.certificateId,
