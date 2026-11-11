@@ -22,8 +22,12 @@ export function serializeCertificate(certificateDocument) {
     mimeType: certificateDocument.mimeType,
     size: certificateDocument.size,
     updatedAt: certificateDocument.updatedAt,
-    viewUrl: certificateDocument.cloudinaryUrl ?? null,
-    downloadUrl: certificateDocument.cloudinaryUrl ?? null,
+    viewUrl: certificateDocument.cloudinaryUrl
+      ? `/api/certificates/view/${certificateDocument._id}`
+      : certificateDocument.externalUrl ?? null,
+    downloadUrl: certificateDocument.cloudinaryUrl
+      ? `/api/certificates/download/${certificateDocument._id}`
+      : null,
   };
 }
 

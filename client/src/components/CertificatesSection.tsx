@@ -90,7 +90,7 @@ function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
               className="button button-primary"
               onClick={() => trackEvent("resume_view")}
             >
-              {t("certificates.open")}
+              {t("certificates.view")}
             </a>
           ) : null}
           {downloadHref && hasDirectFile ? (

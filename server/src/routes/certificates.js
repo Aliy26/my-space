@@ -217,4 +217,89 @@ router.delete("/:certificateId", async (request, response, next) => {
   }
 });
 
+router.get("/view/:certificateId", async (request, response, next) => {
+  try {
+    const certificate = await Certificate.findById(request.params.certificateId);
+    if (!certificate?.cloudinaryUrl) {
+      response.status(404).json({ message: "No certificate uploaded yet." });
+      return;
+    }
+
+    const upstream = await fetch(certificate.cloudinaryUrl);
+    if (!upstream.ok) {
+      response.status(502).json({ message: "Could not fetch certificate from storage." });
+      return;
+    }
+
+    response.setHeader("Content-Type", certificate.mimeType || "application/pdf");
+    response.setHeader(
+      "Content-Disposition",
+      `inline; filename="${certificate.originalName || "certificate"}"`,
+    );
+
+    const reader = upstream.body?.getReader();
+    if (!reader) {
+      response.status(502).json({ message: "Could not stream certificate preview." });
+      return;
+    }
+
+    const pump = async () => {
+      const { done, value } = await reader.read();
+      if (done) {
+        response.end();
+        return;
+      }
+      response.write(Buffer.from(value));
+      return pump();
+    };
+
+    await pump();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/download/:certificateId", async (request, response, next) => {
+  try {
+    const certificate = await Certificate.findById(request.params.certificateId);
+    if (!certificate?.cloudinaryUrl) {
+      response.status(404).json({ message: "No certificate uploaded yet." });
+      return;
+    }
+
+    const upstream = await fetch(certificate.cloudinaryUrl);
+    if (!upstream.ok) {
+      response.status(502).json({ message: "Could not fetch certificate from storage." });
+      return;
+    }
+
+    const filename = certificate.originalName || "certificate";
+    response.setHeader("Content-Type", certificate.mimeType || "application/pdf");
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${filename}"`,
+    );
+
+    const reader = upstream.body?.getReader();
+    if (!reader) {
+      response.status(502).json({ message: "Could not stream certificate download." });
+      return;
+    }
+
+    const pump = async () => {
+      const { done, value } = await reader.read();
+      if (done) {
+        response.end();
+        return;
+      }
+      response.write(Buffer.from(value));
+      return pump();
+    };
+
+    await pump();
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

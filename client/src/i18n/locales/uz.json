@@ -146,6 +146,7 @@
   "certificates": {
     "eyebrow": "Mening sertifikatlarim",
     "title": "Sertifikatlar",
+    "view": "Ko'rish",
     "open": "Ochish",
     "visit": "Sertifikatni ko'rish",
     "download": "Yuklab olish",

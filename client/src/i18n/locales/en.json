@@ -57,6 +57,7 @@
   "certificates": {
     "eyebrow": "My Certificates",
     "title": "Certificates",
+    "view": "View",
     "open": "Open",
     "visit": "View certificate",
     "download": "Download",

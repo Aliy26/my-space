@@ -146,6 +146,7 @@
   "certificates": {
     "eyebrow": "내 자격증",
     "title": "자격증",
+    "view": "보기",
     "open": "열기",
     "visit": "자격증 보기",
     "download": "다운로드",
