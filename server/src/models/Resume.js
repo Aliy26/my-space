@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 const resumeSchema = new mongoose.Schema(
   {
@@ -30,6 +30,6 @@ const resumeSchema = new mongoose.Schema(
   {
     timestamps: true,
   },
-)
+);
 
-export const Resume = mongoose.model('Resume', resumeSchema)
+export const Resume = mongoose.model("Resume", resumeSchema);
