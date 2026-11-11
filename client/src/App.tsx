@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar";
 import Projects from "./components/Projects";
 import ResumeSection from "./components/ResumeSection";
 import Skills from "./components/Skills";
+import CertificatesSection from "./components/CertificatesSection";
 // import { projects as fallbackProjects } from "./data/projects.ts";
 import { skills as fallbackSkills } from "./data/skills.ts";
 import i18n from "./i18n/index.ts";
@@ -25,6 +26,7 @@ import {
   fetchProjects,
   fetchResume,
   fetchSkills,
+  fetchCertificates,
   logout,
   toAbsoluteApiUrl,
   type ContactSettings,
@@ -35,6 +37,7 @@ import type { ProfileImageSummary } from "./types/profile-image.types.ts";
 import type { Project } from "./types/project.types.ts";
 import type { ResumeSummary } from "./types/resume.types.ts";
 import type { Skill } from "./types/skill.types.ts";
+import type { CertificateSummary } from "./types/certificate.types.ts";
 
 type Theme = "dark" | "light";
 
@@ -65,6 +68,7 @@ function App() {
     years: "4",
     builds: "12",
   });
+  const [certificates, setCertificates] = useState<CertificateSummary[]>([]);
   const [isScrolled, setIsScrolled] = useState(false);
   // null = checking, false = not logged in, string = username
   const [authUser, setAuthUser] = useState<string | null | false>(null);
@@ -141,6 +145,13 @@ function App() {
         if (isMounted && skillList.length > 0) setSkills(skillList);
       } catch {
         // Skills fall back to static data.
+      }
+
+      try {
+        const certificateList = await fetchCertificates();
+        if (isMounted) setCertificates(certificateList);
+      } catch {
+        // Certificates fall back to empty.
       }
 
       try {
@@ -234,6 +245,7 @@ function App() {
             </div>
             <Projects projects={safeProjects} />
             <ResumeSection resumes={resumes} />
+            <CertificatesSection certificates={certificates} />
             <Contact
               email={contactSettings.email}
               github={contactSettings.github}

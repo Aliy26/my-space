@@ -2,6 +2,7 @@ import type { Project } from "../types/project.types.ts";
 import type { ProfileImageSummary } from "../types/profile-image.types.ts";
 import type { ResumeSummary } from "../types/resume.types.ts";
 import type { Skill } from "../types/skill.types.ts";
+import type { CertificateSummary } from "../types/certificate.types.ts";
 
 type ProjectPayload = {
   title: string;
@@ -105,6 +106,10 @@ export async function fetchResume() {
   return requestJson<ResumeSummary[]>("/api/resume");
 }
 
+export async function fetchCertificates() {
+  return requestJson<CertificateSummary[]>("/api/certificates");
+}
+
 export async function deleteResume(resumeId: string): Promise<void> {
   const response = await fetch(getApiUrl(`/api/admin/resume/${resumeId}`), {
     method: "DELETE",
@@ -185,6 +190,38 @@ export async function uploadResume(file: File) {
   });
 }
 
+export async function uploadCertificate(
+  file: File | null,
+  payload: {
+    title: string;
+    description?: string;
+    externalUrl?: string;
+  },
+) {
+  const formData = new FormData();
+  formData.append("title", payload.title);
+  if (payload.description) formData.append("description", payload.description);
+  if (payload.externalUrl) formData.append("externalUrl", payload.externalUrl);
+  if (file) formData.append("certificate", file);
+
+  return requestJson<CertificateSummary>("/api/admin/certificates", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function deleteCertificate(certificateId: string): Promise<void> {
+  const response = await fetch(
+    getApiUrl(`/api/admin/certificates/${certificateId}`),
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+}
 
 export async function uploadProfileImage(file: File) {
   const formData = new FormData();

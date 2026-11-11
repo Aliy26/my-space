@@ -10,9 +10,11 @@ import { useTranslation } from "react-i18next";
 import {
   createProject,
   createSkill,
+  deleteCertificate,
   deleteProject,
   deleteResume,
   deleteSkill,
+  fetchCertificates,
   fetchContactSettings,
   fetchDefaultLanguage,
   fetchHeroStats,
@@ -26,11 +28,13 @@ import {
   updateHeroStats,
   updateProject,
   updateSkill,
+  uploadCertificate,
   uploadProfileImage,
   uploadResume,
   type ContactSettings,
   type HeroStats,
 } from "../lib/api.ts";
+import type { CertificateSummary } from "../types/certificate.types.ts";
 import type { ProfileImageSummary } from "../types/profile-image.types.ts";
 import type { Project } from "../types/project.types.ts";
 import type { ResumeSummary } from "../types/resume.types.ts";
@@ -115,9 +119,11 @@ const emptyProjectForm = {
   sortOrder: "0",
 };
 const emptySkillForm = { name: "", category: "", sortOrder: "0" };
+const emptyCertificateForm = { title: "", description: "", externalUrl: "" };
 
 type ProjectForm = typeof emptyProjectForm;
 type SkillForm = typeof emptySkillForm;
+type CertificateForm = typeof emptyCertificateForm;
 
 type ProjectImagePreview = { file: File; objectUrl: string } | null;
 
@@ -128,6 +134,7 @@ type AdminState = {
   skills: Skill[];
   profileImage: ProfileImageSummary | null;
   resumes: ResumeSummary[];
+  certificates: CertificateSummary[];
   selectedLanguage: LanguageCode;
   contactSettings: ContactSettings;
   heroStats: HeroStats;
@@ -140,6 +147,8 @@ type AdminState = {
   projectImagePreview: ProjectImagePreview;
   profileImageFile: File | null;
   resumeFile: File | null;
+  certificateForm: CertificateForm;
+  certificateFile: File | null;
   isLoading: boolean;
   isUploadingProfileImage: boolean;
   isSavingProject: boolean;
@@ -148,6 +157,7 @@ type AdminState = {
   isSavingContact: boolean;
   isSavingHeroStats: boolean;
   isSavingSkill: boolean;
+  isSavingCertificate: boolean;
   statusMessage: string | null;
   errorMessage: string | null;
 };
@@ -158,6 +168,7 @@ type AdminAction =
       projects: Project[];
       skills: Skill[];
       resumes: ResumeSummary[];
+      certificates: CertificateSummary[];
       profileImage: ProfileImageSummary | null;
       language: LanguageCode;
       contact: ContactSettings;
@@ -204,7 +215,14 @@ type AdminAction =
   | { type: "SAVE_SKILL_SUCCESS"; skill: Skill; isEdit: boolean }
   | { type: "SAVE_SKILL_ERROR"; error: string }
   | { type: "DELETE_SKILL_SUCCESS"; skillId: string }
-  | { type: "DELETE_SKILL_ERROR"; error: string };
+  | { type: "DELETE_SKILL_ERROR"; error: string }
+  | { type: "SET_CERTIFICATE_FORM"; field: keyof CertificateForm; value: string }
+  | { type: "SET_CERTIFICATE_FILE"; file: File | null }
+  | { type: "UPLOAD_CERTIFICATE_START" }
+  | { type: "UPLOAD_CERTIFICATE_SUCCESS"; certificate: CertificateSummary }
+  | { type: "UPLOAD_CERTIFICATE_ERROR"; error: string }
+  | { type: "DELETE_CERTIFICATE_SUCCESS"; certificateId: string }
+  | { type: "DELETE_CERTIFICATE_ERROR"; error: string };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -219,6 +237,14 @@ function sortSkills(skills: Skill[]) {
   return [...skills].sort((a, b) => {
     const diff = (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
     return diff !== 0 ? diff : a.name.localeCompare(b.name);
+  });
+}
+
+function sortCertificates(certificates: CertificateSummary[]) {
+  return [...certificates].sort((a, b) => {
+    const aTitle = a.title ?? "";
+    const bTitle = b.title ?? "";
+    return aTitle.localeCompare(bTitle);
   });
 }
 
@@ -266,6 +292,7 @@ const initialState: AdminState = {
   skills: [],
   profileImage: null,
   resumes: [],
+  certificates: [],
   selectedLanguage: "en",
   contactSettings: { email: "", github: "" },
   heroStats: { years: "4", builds: "12" },
@@ -278,6 +305,8 @@ const initialState: AdminState = {
   projectImagePreview: null,
   profileImageFile: null,
   resumeFile: null,
+  certificateForm: emptyCertificateForm,
+  certificateFile: null,
   isLoading: true,
   isUploadingProfileImage: false,
   isSavingProject: false,
@@ -286,6 +315,7 @@ const initialState: AdminState = {
   isSavingContact: false,
   isSavingHeroStats: false,
   isSavingSkill: false,
+  isSavingCertificate: false,
   statusMessage: null,
   errorMessage: null,
 };
@@ -299,6 +329,7 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
         projects: sortProjects(action.projects),
         skills: sortSkills(action.skills),
         resumes: action.resumes,
+        certificates: action.certificates,
         profileImage: action.profileImage,
         selectedLanguage: action.language,
         contactSettings: action.contact,
@@ -568,6 +599,38 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     case "DELETE_SKILL_ERROR":
       return { ...state, errorMessage: action.error };
 
+    case "SET_CERTIFICATE_FORM":
+      return {
+        ...state,
+        certificateForm: { ...state.certificateForm, [action.field]: action.value },
+      };
+    case "SET_CERTIFICATE_FILE":
+      return { ...state, certificateFile: action.file };
+    case "UPLOAD_CERTIFICATE_START":
+      return {
+        ...state,
+        isSavingCertificate: true,
+        errorMessage: null,
+        statusMessage: null,
+      };
+    case "UPLOAD_CERTIFICATE_SUCCESS":
+      return {
+        ...state,
+        isSavingCertificate: false,
+        certificates: sortCertificates([...state.certificates, action.certificate]),
+        certificateForm: emptyCertificateForm,
+        certificateFile: null,
+        statusMessage: "Certificate uploaded.",
+      };
+    case "DELETE_CERTIFICATE_SUCCESS": {
+      const certificates = state.certificates.filter(
+        (c) => c.id !== action.certificateId,
+      );
+      return { ...state, certificates, statusMessage: "Certificate deleted." };
+    }
+    case "DELETE_CERTIFICATE_ERROR":
+      return { ...state, errorMessage: action.error };
+
     default:
       return state;
   }
@@ -594,6 +657,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     skills,
     profileImage,
     resumes,
+    certificates,
     selectedLanguage,
     contactSettings,
     heroStats,
@@ -606,6 +670,8 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     projectImagePreview,
     profileImageFile,
     resumeFile,
+    certificateForm,
+    certificateFile,
     isLoading,
     isUploadingProfileImage,
     isSavingProject,
@@ -614,6 +680,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     isSavingContact,
     isSavingHeroStats,
     isSavingSkill,
+    isSavingCertificate,
     statusMessage,
     errorMessage,
   } = state;
@@ -627,6 +694,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
           projectList,
           skillList,
           resumeList,
+          certificateList,
           profileImageSummary,
           defaultLang,
           contact,
@@ -635,6 +703,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
           fetchProjects(),
           fetchSkills(),
           fetchResume(),
+          fetchCertificates(),
           fetchProfileImage(),
           fetchDefaultLanguage(),
           fetchContactSettings(),
@@ -648,6 +717,7 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
           projects: projectList,
           skills: skillList,
           resumes: resumeList,
+          certificates: certificateList,
           profileImage: profileImageSummary,
           language: defaultLang as LanguageCode,
           contact,
@@ -691,6 +761,19 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
       dispatch({
         type: "UPLOAD_RESUME_ERROR",
         error: error instanceof Error ? error.message : "Unable to delete resume.",
+      });
+    }
+  };
+
+  const handleDeleteCertificate = async (certificateId: string) => {
+    try {
+      await deleteCertificate(certificateId);
+      dispatch({ type: "DELETE_CERTIFICATE_SUCCESS", certificateId });
+    } catch (error) {
+      dispatch({
+        type: "DELETE_CERTIFICATE_ERROR",
+        error:
+          error instanceof Error ? error.message : "Unable to delete certificate.",
       });
     }
   };
@@ -890,6 +973,33 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
         type: "DELETE_SKILL_ERROR",
         error:
           error instanceof Error ? error.message : "Unable to delete skill.",
+      });
+    }
+  };
+
+  const handleCertificateSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const { title, description, externalUrl } = state.certificateForm;
+    if (!title || (!externalUrl && !certificateFile)) return;
+
+    dispatch({ type: "UPLOAD_CERTIFICATE_START" });
+
+    try {
+      const saved = await uploadCertificate(certificateFile, {
+        title: title.trim(),
+        description: description.trim(),
+        externalUrl: externalUrl.trim(),
+      });
+
+      dispatch({
+        type: "UPLOAD_CERTIFICATE_SUCCESS",
+        certificate: saved,
+      });
+    } catch (error) {
+      dispatch({
+        type: "UPLOAD_CERTIFICATE_ERROR",
+        error: error instanceof Error ? error.message : "Unable to upload certificate.",
       });
     }
   };
@@ -1619,6 +1729,130 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                               </article>
                             ))}
                           </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Certificates ───────────────────────────── */}
+                  {id === "certificates" && (
+                    <div className="admin-form">
+                      <form className="admin-form" onSubmit={handleCertificateSubmit}>
+                        <label className="field">
+                          <span>{t("admin.certificateName")}</span>
+                          <input
+                            type="text"
+                            value={certificateForm.title}
+                            placeholder="Certificate Name"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "title",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateUrl")}</span>
+                          <input
+                            type="url"
+                            value={certificateForm.externalUrl}
+                            placeholder="https://example.com/certificate"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "externalUrl",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateDescription")}</span>
+                          <textarea
+                            rows={3}
+                            value={certificateForm.description}
+                            placeholder="Optional short description"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "description",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateFile")}</span>
+                          <input
+                            type="file"
+                            accept=".pdf,image/png,image/jpeg,image/webp"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FILE",
+                                file: e.target.files?.[0] ?? null,
+                              })
+                            }
+                          />
+                        </label>
+                        <div className="admin-inline-actions">
+                          <button
+                            className="button button-primary"
+                            type="submit"
+                            disabled={isSavingCertificate || (!certificateFile && !certificateForm.externalUrl)}
+                          >
+                            {isSavingCertificate
+                              ? t("admin.saving")
+                              : t("admin.uploadCertificate")}
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="admin-certificate-list">
+                        {!isLoading && certificates.length > 0 ? (
+                          certificates.map((certificate) => (
+                            <div key={certificate.id} className="admin-certificate-item">
+                              <div className="admin-certificate-info">
+                                <strong>{certificate.title}</strong>
+                                <span>
+                                  {t("admin.lastUpdated")} {formatDate(certificate.updatedAt)}
+                                </span>
+                              </div>
+                              <div className="admin-inline-actions">
+                                {certificate.viewUrl ? (
+                                  <a
+                                    className="button button-secondary button-icon"
+                                    href={toAbsoluteApiUrl(certificate.viewUrl) ?? undefined}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    <DocumentIcon />
+                                    <span>{t("admin.viewCertificate")}</span>
+                                  </a>
+                                ) : null}
+                                {certificate.externalUrl ? (
+                                  <a
+                                    className="button button-secondary"
+                                    href={certificate.externalUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {t("admin.openLink")}
+                                  </a>
+                                ) : null}
+                                <button
+                                  className="button button-primary"
+                                  type="button"
+                                  onClick={() => handleDeleteCertificate(certificate.id)}
+                                >
+                                  {t("admin.delete")}
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="section-lead">{t("admin.noCertificates")}</p>
                         )}
                       </div>
                     </div>

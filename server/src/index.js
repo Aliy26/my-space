@@ -19,6 +19,7 @@ import projectsRoutes from "./routes/projects.js";
 import resumeRoutes from "./routes/resume.js";
 import skillsRoutes from "./routes/skills.js";
 import trackRoutes from "./routes/track.js";
+import certificatesRoutes from "./routes/certificates.js";
 import { connectToDatabase } from "./db/connect.js";
 import { AdminUser } from "./models/AdminUser.js";
 
@@ -55,7 +56,14 @@ const port = Number(process.env.PORT || 4000);
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 // Additional origins always allowed (Render subdomain as fallback)
 const allowedOrigins = new Set(
-  [clientUrl, process.env.RENDER_EXTERNAL_URL].filter(Boolean),
+  [clientUrl, process.env.CLIENT_URLS, process.env.RENDER_EXTERNAL_URL]
+    .flatMap((value) =>
+      (value ?? "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    )
+    .filter(Boolean),
 );
 const isProduction = process.env.NODE_ENV === "production";
 const localhostOriginPattern = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
@@ -146,6 +154,7 @@ app.use("/api/resume", resumeRoutes);
 app.use("/api/profile-image", profileImageRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/track", trackRoutes);
+app.use("/api/certificates", certificatesRoutes);
 
 // ── SPA catch-all ──────────────────────────────────────────────────────────
 // Must come AFTER express.static and all API routes.

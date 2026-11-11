@@ -4,6 +4,7 @@
     "skills": "Skills",
     "projects": "Projects",
     "resume": "Resume",
+    "certificates": "Certificates",
     "contact": "Contact",
     "admin": "Admin",
     "backToSite": "Back to site"
@@ -52,6 +53,14 @@
     "view": "View",
     "download": "Download",
     "empty": "Resume coming soon — the latest version will appear here once it's uploaded."
+  },
+  "certificates": {
+    "eyebrow": "My Certificates",
+    "title": "Certificates",
+    "open": "Open",
+    "visit": "View certificate",
+    "link": "Reference link",
+    "empty": "No certificates added yet."
   },
   "contact": {
     "eyebrow": "Contact",
@@ -132,7 +141,15 @@
     "skillCategory": "Category",
     "createSkill": "Add skill",
     "updateSkill": "Update skill",
-    "projectImage": "Project image (PNG, JPG, WEBP — optional)"
+    "projectImage": "Project image (PNG, JPG, WEBP — optional)",
+    "certificateName": "Certificate name",
+    "certificateDescription": "Description",
+    "certificateUrl": "Certificate URL",
+    "certificateFile": "Upload PDF or image",
+    "uploadCertificate": "Add certificate",
+    "viewCertificate": "Open certificate",
+    "noCertificates": "No certificates added yet.",
+    "openLink": "Open link"
   },
   "login": {
     "title": "Admin Login",

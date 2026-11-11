@@ -4,6 +4,7 @@
     "skills": "Ko'nikmalar",
     "projects": "Loyihalar",
     "resume": "Rezyume",
+    "certificates": "Sertifikatlar",
     "contact": "Aloqa",
     "admin": "Admin",
     "backToSite": "Saytga qaytish"
@@ -56,7 +57,7 @@
   "contact": {
     "eyebrow": "Aloqa",
     "title": "Shablon bosqichidan keskinroq sayt xohlasangiz, birga quraylik.",
-    "lead": "Men full stack mahsulotlar, frontend-og'ir qurishlar va yaxshi muhandislik hamda kuchli vizual natija talab qiladigan UI-ga yo'naltirilgan hamkorlikga qiziqaman.",
+    "lead": "Men full stack mahsulotlar, frontend-og'ir qurishlar va yaxshi muhandislik hamda kuchli vizual natija talab qiladigan UI-ga yo'naltirilgan hamkorlikka qiziqaman.",
     "startConversation": "Suhbatni boshlash",
     "email": "Email",
     "phone": "Telefon",

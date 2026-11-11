@@ -9,7 +9,22 @@ export function serializeProject(projectDocument) {
     imageUrl: projectDocument.imageUrl ?? null,
     createdAt: projectDocument.createdAt,
     updatedAt: projectDocument.updatedAt,
-  }
+  };
+}
+
+export function serializeCertificate(certificateDocument) {
+  return {
+    id: certificateDocument._id.toString(),
+    title: certificateDocument.title,
+    description: certificateDocument.description ?? "",
+    externalUrl: certificateDocument.externalUrl ?? null,
+    filename: certificateDocument.originalName ?? null,
+    mimeType: certificateDocument.mimeType,
+    size: certificateDocument.size,
+    updatedAt: certificateDocument.updatedAt,
+    viewUrl: certificateDocument.cloudinaryUrl ?? null,
+    downloadUrl: certificateDocument.cloudinaryUrl ?? null,
+  };
 }
 
 export function serializeResume(resumeDocument) {
@@ -19,9 +34,9 @@ export function serializeResume(resumeDocument) {
     mimeType: resumeDocument.mimeType,
     size: resumeDocument.size,
     updatedAt: resumeDocument.updatedAt,
-    viewUrl: '/api/resume/view',
-    downloadUrl: '/api/resume/download',
-  }
+    viewUrl: "/api/resume/view",
+    downloadUrl: "/api/resume/download",
+  };
 }
 
 export function serializeProfileImage(profileImageDocument) {
@@ -32,7 +47,7 @@ export function serializeProfileImage(profileImageDocument) {
     size: profileImageDocument.size,
     updatedAt: profileImageDocument.updatedAt,
     viewUrl: profileImageDocument.cloudinaryUrl ?? null,
-  }
+  };
 }
 
 export function serializeSkill(skillDocument) {
@@ -41,5 +56,5 @@ export function serializeSkill(skillDocument) {
     name: skillDocument.name,
     category: skillDocument.category,
     sortOrder: skillDocument.sortOrder,
-  }
+  };
 }

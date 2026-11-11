@@ -69,6 +69,7 @@ function Navbar({
     { href: "#skills", label: t("nav.skills") },
     { href: "#projects", label: t("nav.projects") },
     { href: "#resume", label: t("nav.resume") },
+    { href: "#certificates", label: t("nav.certificates") },
     { href: "#contact", label: t("nav.contact") },
   ];
 
