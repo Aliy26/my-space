@@ -1,6 +1,6 @@
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useTranslation } from "react-i18next";
-import resumeFallback from "../assets/resume.pdf";
+import resumeFallback from "../assets/Resume-eng.pdf";
 import DocumentIcon from "./DocumentIcon.tsx";
 import HeroTerminal from "./HeroTerminal.tsx";
 import HeroTyping from "./HeroTyping.tsx";
