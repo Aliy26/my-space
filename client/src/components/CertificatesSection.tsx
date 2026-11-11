@@ -1,3 +1,4 @@
+import { toAbsoluteApiUrl } from "../lib/api.ts";
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "../lib/track.ts";
 import type { CertificateSummary } from "../types/certificate.types.ts";
@@ -55,9 +56,14 @@ const CertificateIcon = () => (
 function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
   const { t } = useTranslation();
   const hasDirectFile = Boolean(certificate.viewUrl);
-  const primaryHref = hasDirectFile
-    ? certificate.viewUrl!
-    : (certificate.externalUrl ?? undefined);
+  const viewHref = hasDirectFile
+    ? toAbsoluteApiUrl(certificate.viewUrl) ?? undefined
+    : undefined;
+  const downloadHref = hasDirectFile
+    ? toAbsoluteApiUrl(certificate.downloadUrl ?? certificate.viewUrl) ??
+      viewHref
+    : undefined;
+  const primaryHref = viewHref ?? (certificate.externalUrl ?? undefined);
   const secondaryHref = certificate.externalUrl || undefined;
 
   return (
@@ -87,6 +93,17 @@ function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
               onClick={() => trackEvent("resume_view")}
             >
               {hasDirectFile ? t("certificates.open") : t("certificates.visit")}
+            </a>
+          ) : null}
+          {downloadHref && hasDirectFile ? (
+            <a
+              href={downloadHref}
+              download={certificate.filename ?? undefined}
+              target="_blank"
+              rel="noreferrer"
+              className="button button-secondary"
+            >
+              {t("certificates.download")}
             </a>
           ) : null}
           {secondaryHref && secondaryHref !== primaryHref ? (

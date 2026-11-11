@@ -142,5 +142,14 @@
     "submit": "로그인",
     "signingIn": "로그인 중...",
     "backToSite": "사이트로 돌아가기"
+  },
+  "certificates": {
+    "eyebrow": "내 자격증",
+    "title": "자격증",
+    "open": "열기",
+    "visit": "자격증 보기",
+    "download": "다운로드",
+    "link": "참조 링크",
+    "empty": "아직 추가된 자격증이 없습니다."
   }
 }

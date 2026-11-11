@@ -142,5 +142,14 @@
     "submit": "Kirish",
     "signingIn": "Kirilmoqda...",
     "backToSite": "Saytga qaytish"
+  },
+  "certificates": {
+    "eyebrow": "Mening sertifikatlarim",
+    "title": "Sertifikatlar",
+    "open": "Ochish",
+    "visit": "Sertifikatni ko'rish",
+    "download": "Yuklab olish",
+    "link": "Ma'lumot havolasi",
+    "empty": "Hali qo'shilgan sertifikatlar yo'q."
   }
 }
