@@ -216,7 +216,11 @@ type AdminAction =
   | { type: "SAVE_SKILL_ERROR"; error: string }
   | { type: "DELETE_SKILL_SUCCESS"; skillId: string }
   | { type: "DELETE_SKILL_ERROR"; error: string }
-  | { type: "SET_CERTIFICATE_FORM"; field: keyof CertificateForm; value: string }
+  | {
+      type: "SET_CERTIFICATE_FORM";
+      field: keyof CertificateForm;
+      value: string;
+    }
   | { type: "SET_CERTIFICATE_FILE"; file: File | null }
   | { type: "UPLOAD_CERTIFICATE_START" }
   | { type: "UPLOAD_CERTIFICATE_SUCCESS"; certificate: CertificateSummary }
@@ -602,7 +606,10 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     case "SET_CERTIFICATE_FORM":
       return {
         ...state,
-        certificateForm: { ...state.certificateForm, [action.field]: action.value },
+        certificateForm: {
+          ...state.certificateForm,
+          [action.field]: action.value,
+        },
       };
     case "SET_CERTIFICATE_FILE":
       return { ...state, certificateFile: action.file };
@@ -617,7 +624,10 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
       return {
         ...state,
         isSavingCertificate: false,
-        certificates: sortCertificates([...state.certificates, action.certificate]),
+        certificates: sortCertificates([
+          ...state.certificates,
+          action.certificate,
+        ]),
         certificateForm: emptyCertificateForm,
         certificateFile: null,
         statusMessage: "Certificate uploaded.",
@@ -760,7 +770,8 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     } catch (error) {
       dispatch({
         type: "UPLOAD_RESUME_ERROR",
-        error: error instanceof Error ? error.message : "Unable to delete resume.",
+        error:
+          error instanceof Error ? error.message : "Unable to delete resume.",
       });
     }
   };
@@ -773,7 +784,9 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
       dispatch({
         type: "DELETE_CERTIFICATE_ERROR",
         error:
-          error instanceof Error ? error.message : "Unable to delete certificate.",
+          error instanceof Error
+            ? error.message
+            : "Unable to delete certificate.",
       });
     }
   };
@@ -999,7 +1012,10 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
     } catch (error) {
       dispatch({
         type: "UPLOAD_CERTIFICATE_ERROR",
-        error: error instanceof Error ? error.message : "Unable to upload certificate.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to upload certificate.",
       });
     }
   };
@@ -1016,6 +1032,12 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
       Icon: FileIcon,
       label: t("admin.resume"),
       title: t("admin.currentResume"),
+    },
+    {
+      id: "certificates",
+      Icon: FileIcon,
+      label: t("certificates.title"),
+      title: t("admin.uploadCertificate"),
     },
     {
       id: "contact",
@@ -1170,12 +1192,17 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                             <div key={r.id} className="admin-resume-row">
                               <div className="admin-resume-meta">
                                 <strong>{r.filename}</strong>
-                                <span>{t("admin.lastUpdated")} {formatDate(r.updatedAt)}</span>
+                                <span>
+                                  {t("admin.lastUpdated")}{" "}
+                                  {formatDate(r.updatedAt)}
+                                </span>
                               </div>
                               <div className="admin-inline-actions">
                                 <a
                                   className="button button-secondary button-icon"
-                                  href={toAbsoluteApiUrl(r.viewUrl) ?? undefined}
+                                  href={
+                                    toAbsoluteApiUrl(r.viewUrl) ?? undefined
+                                  }
                                   target="_blank"
                                   rel="noreferrer"
                                 >
@@ -1195,9 +1222,14 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                         </div>
                       )}
                       {resumes.length < 3 && (
-                        <form className="admin-form" onSubmit={handleResumeSubmit}>
+                        <form
+                          className="admin-form"
+                          onSubmit={handleResumeSubmit}
+                        >
                           <label className="field">
-                            <span>{t("admin.uploadPdf")} ({resumes.length}/3)</span>
+                            <span>
+                              {t("admin.uploadPdf")} ({resumes.length}/3)
+                            </span>
                             <input
                               type="file"
                               accept="application/pdf"
@@ -1214,13 +1246,159 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                             type="submit"
                             disabled={isUploadingResume || !resumeFile}
                           >
-                            {isUploadingResume ? t("admin.uploading") : t("admin.uploadResume")}
+                            {isUploadingResume
+                              ? t("admin.uploading")
+                              : t("admin.uploadResume")}
                           </button>
                         </form>
                       )}
                       {resumes.length >= 3 && (
-                        <p className="section-lead">Maximum of 3 resumes reached. Delete one to upload another.</p>
+                        <p className="section-lead">
+                          Maximum of 3 resumes reached. Delete one to upload
+                          another.
+                        </p>
                       )}
+                    </div>
+                  )}
+
+                  {/* ── Certificates ───────────────────────────── */}
+                  {id === "certificates" && (
+                    <div className="admin-form">
+                      <form
+                        className="admin-form"
+                        onSubmit={handleCertificateSubmit}
+                      >
+                        <label className="field">
+                          <span>{t("admin.certificateName")}</span>
+                          <input
+                            type="text"
+                            value={certificateForm.title}
+                            placeholder="Certificate Name"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "title",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateUrl")}</span>
+                          <input
+                            type="url"
+                            value={certificateForm.externalUrl}
+                            placeholder="https://example.com/certificate"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "externalUrl",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateDescription")}</span>
+                          <textarea
+                            rows={3}
+                            value={certificateForm.description}
+                            placeholder="Optional short description"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FORM",
+                                field: "description",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="field">
+                          <span>{t("admin.certificateFile")}</span>
+                          <input
+                            type="file"
+                            accept=".pdf,image/png,image/jpeg,image/webp"
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_CERTIFICATE_FILE",
+                                file: e.target.files?.[0] ?? null,
+                              })
+                            }
+                          />
+                        </label>
+                        <div className="admin-inline-actions">
+                          <button
+                            className="button button-primary"
+                            type="submit"
+                            disabled={
+                              isSavingCertificate ||
+                              (!certificateFile && !certificateForm.externalUrl)
+                            }
+                          >
+                            {isSavingCertificate
+                              ? t("admin.saving")
+                              : t("admin.uploadCertificate")}
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="admin-certificate-list">
+                        {!isLoading && certificates.length > 0 ? (
+                          certificates.map((certificate) => (
+                            <div
+                              key={certificate.id}
+                              className="admin-certificate-item"
+                            >
+                              <div className="admin-certificate-info">
+                                <strong>{certificate.title}</strong>
+                                <span>
+                                  {t("admin.lastUpdated")}{" "}
+                                  {formatDate(certificate.updatedAt)}
+                                </span>
+                              </div>
+                              <div className="admin-inline-actions">
+                                {certificate.viewUrl ? (
+                                  <a
+                                    className="button button-secondary button-icon"
+                                    href={
+                                      toAbsoluteApiUrl(certificate.viewUrl) ??
+                                      undefined
+                                    }
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    <DocumentIcon />
+                                    <span>{t("admin.viewCertificate")}</span>
+                                  </a>
+                                ) : null}
+                                {certificate.externalUrl ? (
+                                  <a
+                                    className="button button-secondary"
+                                    href={certificate.externalUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {t("admin.openLink")}
+                                  </a>
+                                ) : null}
+                                <button
+                                  className="button button-primary"
+                                  type="button"
+                                  onClick={() =>
+                                    handleDeleteCertificate(certificate.id)
+                                  }
+                                >
+                                  {t("admin.delete")}
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="section-lead">
+                            {t("admin.noCertificates")}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -1729,130 +1907,6 @@ function AdminPage({ onProfileImageChange, onLogout }: AdminPageProps) {
                               </article>
                             ))}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ── Certificates ───────────────────────────── */}
-                  {id === "certificates" && (
-                    <div className="admin-form">
-                      <form className="admin-form" onSubmit={handleCertificateSubmit}>
-                        <label className="field">
-                          <span>{t("admin.certificateName")}</span>
-                          <input
-                            type="text"
-                            value={certificateForm.title}
-                            placeholder="Certificate Name"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "SET_CERTIFICATE_FORM",
-                                field: "title",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="field">
-                          <span>{t("admin.certificateUrl")}</span>
-                          <input
-                            type="url"
-                            value={certificateForm.externalUrl}
-                            placeholder="https://example.com/certificate"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "SET_CERTIFICATE_FORM",
-                                field: "externalUrl",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="field">
-                          <span>{t("admin.certificateDescription")}</span>
-                          <textarea
-                            rows={3}
-                            value={certificateForm.description}
-                            placeholder="Optional short description"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "SET_CERTIFICATE_FORM",
-                                field: "description",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="field">
-                          <span>{t("admin.certificateFile")}</span>
-                          <input
-                            type="file"
-                            accept=".pdf,image/png,image/jpeg,image/webp"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "SET_CERTIFICATE_FILE",
-                                file: e.target.files?.[0] ?? null,
-                              })
-                            }
-                          />
-                        </label>
-                        <div className="admin-inline-actions">
-                          <button
-                            className="button button-primary"
-                            type="submit"
-                            disabled={isSavingCertificate || (!certificateFile && !certificateForm.externalUrl)}
-                          >
-                            {isSavingCertificate
-                              ? t("admin.saving")
-                              : t("admin.uploadCertificate")}
-                          </button>
-                        </div>
-                      </form>
-
-                      <div className="admin-certificate-list">
-                        {!isLoading && certificates.length > 0 ? (
-                          certificates.map((certificate) => (
-                            <div key={certificate.id} className="admin-certificate-item">
-                              <div className="admin-certificate-info">
-                                <strong>{certificate.title}</strong>
-                                <span>
-                                  {t("admin.lastUpdated")} {formatDate(certificate.updatedAt)}
-                                </span>
-                              </div>
-                              <div className="admin-inline-actions">
-                                {certificate.viewUrl ? (
-                                  <a
-                                    className="button button-secondary button-icon"
-                                    href={toAbsoluteApiUrl(certificate.viewUrl) ?? undefined}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    <DocumentIcon />
-                                    <span>{t("admin.viewCertificate")}</span>
-                                  </a>
-                                ) : null}
-                                {certificate.externalUrl ? (
-                                  <a
-                                    className="button button-secondary"
-                                    href={certificate.externalUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  >
-                                    {t("admin.openLink")}
-                                  </a>
-                                ) : null}
-                                <button
-                                  className="button button-primary"
-                                  type="button"
-                                  onClick={() => handleDeleteCertificate(certificate.id)}
-                                >
-                                  {t("admin.delete")}
-                                </button>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="section-lead">{t("admin.noCertificates")}</p>
                         )}
                       </div>
                     </div>
