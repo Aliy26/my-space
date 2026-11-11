@@ -63,8 +63,6 @@ function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
     ? (toAbsoluteApiUrl(certificate.downloadUrl ?? certificate.viewUrl) ??
       viewHref)
     : undefined;
-  const primaryHref = viewHref ?? certificate.externalUrl ?? undefined;
-  const secondaryHref = certificate.externalUrl || undefined;
 
   return (
     <div className="resume-card">
@@ -84,36 +82,26 @@ function CertificateCard({ certificate }: { certificate: CertificateSummary }) {
           </p>
         ) : null}
         <div className="resume-card-actions">
-          {primaryHref ? (
+          {viewHref ? (
             <a
-              href={primaryHref}
+              href={viewHref}
               target="_blank"
               rel="noreferrer"
               className="button button-primary"
               onClick={() => trackEvent("resume_view")}
             >
-              {hasDirectFile ? t("certificates.open") : t("certificates.visit")}
+              {t("certificates.open")}
             </a>
           ) : null}
           {downloadHref && hasDirectFile ? (
             <a
               href={downloadHref}
-              download={certificate.filename ?? undefined}
+              className="button button-secondary"
               target="_blank"
               rel="noreferrer"
-              className="button button-secondary"
+              download={certificate.filename ?? undefined}
             >
               {t("certificates.download")}
-            </a>
-          ) : null}
-          {secondaryHref && secondaryHref !== primaryHref ? (
-            <a
-              href={secondaryHref}
-              target="_blank"
-              rel="noreferrer"
-              className="button button-secondary"
-            >
-              {t("certificates.link")}
             </a>
           ) : null}
         </div>
