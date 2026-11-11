@@ -6,11 +6,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const hasCloudinaryConfig = Boolean(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET,
-);
+export function hasCloudinaryConfig() {
+  return Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET,
+  );
+}
 
 export { cloudinary };
 
@@ -20,7 +22,7 @@ export { cloudinary };
  */
 export function uploadBuffer(buffer, options = {}) {
   return new Promise((resolve, reject) => {
-    if (!hasCloudinaryConfig) {
+    if (!hasCloudinaryConfig()) {
       reject(
         new Error(
           "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.",
@@ -40,7 +42,7 @@ export function uploadBuffer(buffer, options = {}) {
 
 export async function destroyCloudinaryAsset(publicId, options = {}) {
   if (!publicId) return null;
-  if (!hasCloudinaryConfig) {
+  if (!hasCloudinaryConfig()) {
     return null;
   }
 
